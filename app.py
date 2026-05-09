@@ -18,7 +18,6 @@ HEADERS = {
 }
 
 SITES = {
-    # --- СОЦИАЛЬНЫЕ СЕТИ И МЕССЕНДЖЕРЫ (20) ---
     "VK": {"url": "https://m.vk.com/{}", "category": "Соцсети"},
     "OK.ru": {"url": "https://ok.ru/profile/{}", "category": "Соцсети"},
     "Telegram": {"url": "https://t.me/{}", "category": "Мессенджеры"},
@@ -40,7 +39,6 @@ SITES = {
     "My.mail.ru": {"url": "https://my.mail.ru/mail/{}/", "category": "Соцсети"},
     "Foursquare": {"url": "https://foursquare.com/user/{}", "category": "Медиа"},
 
-    # --- IT, РАЗРАБОТКА И ТЕХНОЛОГИИ (20) ---
     "GitHub": {"url": "https://github.com/{}", "category": "IT & Разработка"},
     "GitLab": {"url": "https://gitlab.com/{}", "category": "IT & Разработка"},
     "Habr": {"url": "https://habr.com/ru/users/{}/", "category": "IT & Разработка"},
@@ -62,7 +60,6 @@ SITES = {
     "LeetCode": {"url": "https://leetcode.com/{}", "category": "IT & Разработка"},
     "Tproger": {"url": "https://tproger.ru/users/{}/", "category": "IT & Разработка"},
 
-    # --- ИГРЫ (15) ---
     "Steam": {"url": "https://steamcommunity.com/id/{}", "category": "Игры"},
     "Chess.com": {"url": "https://www.chess.com/member/{}", "category": "Игры"},
     "Twitch": {"url": "https://www.twitch.tv/{}", "category": "Игры"},
@@ -79,7 +76,6 @@ SITES = {
     "Itch.io": {"url": "https://{}.itch.io", "category": "Игры"},
     "Raptr": {"url": "http://raptr.com/{}", "category": "Игры"},
 
-    # --- МЕДИА И ДИЗАЙН (15) ---
     "SoundCloud": {"url": "https://soundcloud.com/{}", "category": "Медиа"},
     "Vimeo": {"url": "https://vimeo.com/{}", "category": "Медиа"},
     "Last.fm": {"url": "https://www.last.fm/user/{}", "category": "Медиа"},
@@ -96,7 +92,6 @@ SITES = {
     "SmugMug": {"url": "https://{}.smugmug.com", "category": "Медиа"},
     "VSCO": {"url": "https://vsco.co/{}", "category": "Медиа"},
 
-    # --- ОБУЧЕНИЕ И РАБОТА (15) ---
     "Duolingo": {"url": "https://www.duolingo.com/profile/{}", "category": "Обучение"},
     "Coursera": {"url": "https://www.coursera.org/user/{}", "category": "Обучение"},
     "Upwork": {"url": "https://www.upwork.com/freelancers/~{}", "category": "Работа"},
@@ -113,7 +108,6 @@ SITES = {
     "Issuu": {"url": "https://issuu.com/{}", "category": "Обучение"},
     "ProductHunt": {"url": "https://www.producthunt.com/@{}", "category": "Работа"},
 
-    # --- ФОРУМЫ, БЛОГИ И ОБРАЗ ЖИЗНИ (15) ---
     "Pikabu": {"url": "https://pikabu.ru/@{}", "category": "Блоги"},
     "LiveJournal": {"url": "https://{}.livejournal.com", "category": "Блоги"},
     "Blogger": {"url": "https://{}.blogspot.com", "category": "Блоги"},
@@ -242,18 +236,14 @@ if run_btn:
                 r = f.result()
                 if r: results.append(r)
 
-    # Выделяем названия найденных сайтов
     found_names = [r['site'] for r in results]
-    # Вычисляем сайты, где ничего не нашли
     not_found_names = [name for name in SITES.keys() if name not in found_names]
 
     if results:
-        # --- БЛОК 1: ОБНАРУЖЕННЫЕ ПРОФИЛИ ---
         st.subheader("🌐 Обнаруженные профили")
         for acc in results:
             st.markdown(f"✅ **{acc['site']}**: [{acc['url']}]({acc['url']})")
 
-        # --- БЛОК 2: АНАЛИЗ УТЕЧЕК (НОВОЕ) ---
         st.divider()
         st.subheader("⚠️ Проверка компрометации (Data Breach OSINT)")
         emails, breach_dbs = generate_breach_intel(target_user)
@@ -268,14 +258,12 @@ if run_btn:
             for db in breach_dbs:
                 st.markdown(f"🔗 **{db['name']}**: [Перейти к поиску]({db['url']})")
 
-        # --- БЛОК 3: ГРАФ СВЯЗЕЙ ---
         st.divider()
         st.subheader("🕸️ Векторный граф категорий")
         df_g = pd.DataFrame([{"Узел": target_user, "Сфера": r["category"], "Ресурс": r["site"]} for r in results])
         fig = px.sunburst(df_g, path=['Узел', 'Сфера', 'Ресурс'], color='Сфера', color_discrete_sequence=px.colors.qualitative.Pastel)
         st.plotly_chart(fig, use_container_width=True)
 
-        # --- БЛОК 4: УМНЫЙ АНАЛИЗ ПСЕВДОНИМОВ ---
         st.divider()
         st.subheader("🧬 Структурный анализ алиасов (Мутации)")
         st.write("Логические перестановки частей никнейма и платформенные суффиксы:")
@@ -285,7 +273,6 @@ if run_btn:
         for idx, mut in enumerate(mutations):
             cols_mut[idx % 4].code(mut, language="text")
 
-        # --- БЛОК 5: МЕДИА-ФОРЕНЗИКА ---
         st.divider()
         st.subheader("🖼️ Форензика медиа-артефактов")
         cols = st.columns(3)
@@ -311,7 +298,6 @@ if run_btn:
     else:
         st.error("Пользователь не обнаружен.")
 
-    # --- НОВЫЙ БЛОК: САЙТЫ БЕЗ РЕЗУЛЬТАТОВ ---
     st.divider()
     st.subheader("📂 Ресурсы без обнаруженных следов")
     if not_found_names:
